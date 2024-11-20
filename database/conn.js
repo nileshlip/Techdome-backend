@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-mongoose.connect(process.env.DB).then(() => {
-    console.log("connection established...!");
-}).catch((error) => {
-    console.log(error);
-})
+dotenv.config();
+
+const uri = `mongodb://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
+
+mongoose
+  .connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Database connection successful"))
+  .catch((err) => console.error("Database connection error", err));
