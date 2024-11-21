@@ -1,50 +1,44 @@
 const express = require("express");
-const app = express();
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const multer = require('multer');
 const cloudinary = require('cloudinary');
 
+// Load environment variables
 dotenv.config();
-const port = process.env.PORT;
 
+const app = express();
+const port = process.env.PORT || 8000;
 
-////////------ cloudinary -------//////////
+////////------ Cloudinary Configuration ------//////////
 cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.env.API_KEY,
     api_secret: process.env.API_SECRET
 });
 
-
+// Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cors({
-    origin: true
-}));
+app.use(cors({ origin: true }));
 
-//////-----connection with database-----//////
+//////----- Database Connection -----//////
 require("./database/conn");
 
-////////--------routes--------/////////
+////////-------- Routes --------/////////
 const userRoutes = require("./routes/userRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 
-//////////--------api----------/////////
+// API Routes
 app.use("/api", userRoutes);
 app.use("/api", blogRoutes);
 
-
+// Health Check
 app.get("/", (req, res) => {
-    res.send("Express : backend");
-})
-
-app.post("/", (req, res) => {
-    console.log(JSON.stringify(req.body, 0, 2));
-    res.status("200").send(req.body)
-})
+    res.send("Backend is running!");
+});
 
 app.listen(port, () => {
-    console.log(`listening at port ${port}`)
-})
+    console.log(`Server listening at port ${port}`);
+});
